@@ -162,13 +162,13 @@ function parents(){
   app.innerHTML=`<div class="top noprint"><button class="btn" id="back">← Menu</button></div>
   <div class="qbox pop"><div class="lbl" style="color:#0b3aa8;font-weight:800;letter-spacing:.12em">ESPACE PARENTS</div>
   <h2 class="lg" style="font-size:28px;margin:4px 0 6px;color:#e8282b">🎓 Le diplôme officiel des 777 faits</h2>
-  <p style="font-size:17px;line-height:1.35;margin:0 0 14px">Un diplôme personnalisé au prénom de votre enfant, avec ses badges, à imprimer et à afficher dans sa chambre. Gratuit : il suffit d'indiquer <b>votre</b> adresse email.</p>
+  <p style="font-size:17px;line-height:1.35;margin:0 0 14px">Un diplôme personnalisé au prénom de votre enfant, avec ses badges, à imprimer et à afficher dans sa chambre. Gratuit : indiquez <b>votre</b> adresse email et le diplôme <b>s'affiche aussitôt à l'écran</b>, prêt à imprimer (ou à enregistrer en PDF).</p>
   <form class="form" id="f" novalidate>
     <div><label for="pr">Prénom de l'enfant (pour le diplôme)</label><input type="text" id="pr" maxlength="24" autocomplete="off" placeholder="Ex. : Lucas"></div>
     <div><label for="em">Votre email (parent)</label><input type="email" id="em" autocomplete="email" placeholder="parent@exemple.fr"></div>
     <label class="chk"><input type="checkbox" id="ok"><span>Je suis le parent ou un adulte responsable et j'accepte de recevoir par email les nouveautés de Francis W. Wolff (nouveaux livres, nouveaux quiz). Désinscription en un clic à tout moment.</span></label>
     <div class="err" id="er" aria-live="polite"></div>
-    <button class="btn y big" type="submit">Recevoir mon diplôme 🎉</button>
+    <button class="btn y big" type="submit">Afficher mon diplôme 🎉</button>
     <p class="small">Le prénom de l'enfant reste sur cet appareil et n'est jamais envoyé. Seul votre email est transmis, uniquement pour vous écrire. Aucune revente.</p>
   </form></div>`;
   $('#back').onclick=home; scrollTo(0,0);
@@ -195,7 +195,7 @@ function dipShow(){
   <div class="tx">pour avoir relevé les quiz du livre et gagné <b>${nb} badge${nb>1?'s':''} sur 10</b>.<br>${'⭐'.repeat(Math.max(1,Math.ceil(nb/2)))}</div>
   <div class="sg"><div>Le ${d}</div><div><span class="sig">Francis W. Wolff</span><br>l'auteur</div></div></div>
   <div class="noprint" style="margin-top:14px;display:grid;gap:10px;max-width:420px;margin-left:auto;margin-right:auto">
-  <p style="text-align:center;margin:0;font-size:16px;color:#e9efff">${nb<10?'Gagne d\'autres badges : ton diplôme se met à jour tout seul !':'Bravo, tu as tous les badges !'}</p>
+  <p style="text-align:center;margin:0;font-size:16px;color:#e9efff">Touchez « 🖨️ Imprimer » pour l'imprimer ou l'enregistrer en PDF.<br>${nb<10?'Gagne d\'autres badges : ton diplôme se met à jour tout seul !':'Bravo, tu as tous les badges !'}</p>
   <div class="form" style="grid-template-columns:1fr auto;align-items:end"><input type="text" id="nn" maxlength="24" value="${esc(S.name||'')}" aria-label="Prénom"><button class="btn" id="nm">Changer</button></div></div>`;
   $('#back').onclick=home; $('#pr').onclick=()=>print();
   $('#nm').onclick=()=>{const n=$('#nn').value.trim();if(n){S.name=n.slice(0,24);save();dipShow()}};

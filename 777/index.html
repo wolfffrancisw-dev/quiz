@@ -89,10 +89,10 @@ footer a{color:#fff}
 .dip .sig{font-family:LG;font-size:20px;color:var(--bleu)}
 @media print{
   @page{size:A4 landscape;margin:10mm}
-  body{background:#fff!important}body:before{display:none}
+  html,body{min-height:0!important;height:auto!important;background:#fff!important}body:before{display:none}
   .wrap{max-width:none;padding:0}
   .noprint,.confetti{display:none!important}
-  .dip{box-shadow:none;height:186mm;display:flex;flex-direction:column;justify-content:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .dip{box-shadow:none;height:180mm;max-height:180mm;overflow:hidden;break-inside:avoid;page-break-after:avoid;display:flex;flex-direction:column;justify-content:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .dip h2{font-size:58px}.dip .nm{font-size:80px}.dip .tx{font-size:21px;max-width:none}.dip .ti{align-self:center;font-size:28px;padding:8px 30px 4px}.dip .md{width:130px;height:130px}.dip .k1{font-size:16px}.dip .sg{max-width:760px;margin:22px auto 0;width:100%;font-size:16px}.dip .sig{font-size:26px}
 }
 </style></head><body>

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les Histoires Zinzins</title>
+<meta name="description" content="L'appli compagnon du livre Les Histoires Zinzins : tes histoires lues à voix haute par une souris, un géant ou un robot.">
+<meta name="theme-color" content="#FFC93C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF6E5; --ink:#2B1B3D; --pink:#FF4F8B; --yellow:#FFC93C; --blue:#3DA5FF; --green:#33C27A; --purple:#7B4DFF;
+  --card:#FFFFFF; --muted:#7A6A86; --line:#2B1B3D;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif}
+body{min-height:100vh;background-image:radial-gradient(circle at 10% 10%,#FFE2A8 0 60px,transparent 61px),radial-gradient(circle at 92% 18%,#FFD1E1 0 45px,transparent 46px),radial-gradient(circle at 85% 92%,#CFE8FF 0 70px,transparent 71px);background-attachment:fixed}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px 40px}
+h1,h2,h3,.fred{font-family:Fredoka,Nunito,sans-serif}
+.logo{text-align:center;margin:8px 0 4px}
+.logo h1{font-size:40px;line-height:1;margin:0;letter-spacing:.5px}
+.logo h1 span{display:inline-block;transform:rotate(-4deg)}
+.logo h1 .z{color:var(--pink);transform:rotate(5deg)}
+.logo p{margin:6px 0 0;color:var(--muted);font-weight:700}
+.card{background:var(--card);border:3px solid var(--line);border-radius:22px;box-shadow:6px 6px 0 var(--line);padding:18px;margin:18px 0}
+.btn{appearance:none;border:3px solid var(--line);border-radius:16px;box-shadow:4px 4px 0 var(--line);background:var(--yellow);color:var(--ink);font:700 18px Fredoka,sans-serif;padding:13px 18px;cursor:pointer;width:100%;transition:transform .08s, box-shadow .08s}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--line)}
+.btn.pink{background:var(--pink);color:#fff}.btn.blue{background:var(--blue);color:#fff}.btn.green{background:var(--green);color:#fff}.btn.white{background:#fff}.btn.purple{background:var(--purple);color:#fff}
+.btn.small{font-size:15px;padding:9px 12px;width:auto}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
+.story{display:flex;align-items:center;gap:14px;cursor:pointer;margin:14px 0;padding:14px}
+.story .emo{font-size:38px;width:58px;height:58px;display:grid;place-items:center;border-radius:16px;border:3px solid var(--line);flex:none}
+.story h3{margin:0;font-size:19px}.story p{margin:3px 0 0;color:var(--muted);font-size:14px;font-weight:700}
+.locked{opacity:.65}
+.tag{display:inline-block;font:700 12px Nunito;background:var(--ink);color:#fff;border-radius:99px;padding:3px 9px;margin-left:6px;vertical-align:middle}
+.progress{height:14px;border:3px solid var(--line);border-radius:99px;background:#fff;overflow:hidden;margin:4px 0 16px}
+.progress>div{height:100%;background:var(--green);transition:width .3s}
+.ask{font:700 15px Nunito;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.type{font:700 28px/1.15 Fredoka,sans-serif;margin:6px 0 4px}
+.ex{color:var(--muted);font-weight:700;margin-bottom:14px}
+input[type=text]{width:100%;font:700 22px Nunito;padding:14px;border:3px solid var(--line);border-radius:16px;outline:none;background:#FFFDF7}
+input[type=text]:focus{box-shadow:0 0 0 4px var(--yellow)}
+.help{background:none;border:none;color:var(--blue);font:800 15px Nunito;text-decoration:underline;cursor:pointer;padding:6px 0;margin:6px 0 10px}
+.helpbox{background:#EAF5FF;border:2px dashed var(--blue);border-radius:14px;padding:10px 12px;font-size:15px;margin-bottom:12px}
+.text{font-size:19px;line-height:1.65}
+.text b{background:var(--yellow);border:2px solid var(--line);border-radius:8px;padding:0 6px;white-space:nowrap;font-family:Fredoka}
+.text b.on{background:var(--pink);color:#fff}
+.voices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.vbtn{border:3px solid var(--line);border-radius:14px;background:#fff;font:700 16px Fredoka;padding:10px;cursor:pointer;box-shadow:3px 3px 0 var(--line)}
+.vbtn.sel{background:var(--purple);color:#fff}
+.center{text-align:center}
+.muted{color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+.back{background:none;border:none;font:800 16px Nunito;color:var(--ink);cursor:pointer;padding:4px 0}
+.hidden{display:none}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.confetti i{position:absolute;top:-20px;width:10px;height:16px;border-radius:3px;animation:fall 1.8s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.small{font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+<div class="confetti" id="confetti"></div>
+
+<script>
+/* ---------- HISTOIRES : 2 extraits du livre (gratuits) + 10 histoires secrètes (code du livre) ---------- */
+const STORIES = [
+ {
+  "id": "h1",
+  "title": "La rentrée chez les zinzins",
+  "emo": "🏫",
+  "color": "#FFC93C",
+  "bonus": false,
+  "blanks": [
+   {
+    "t": "un animal (au masculin)",
+    "ex": "hippopotame",
+    "h": "nom"
+   },
+   {
+    "t": "un adjectif (au masculin)",
+    "ex": "gluant",
+    "h": "adjectif"
+   },
+   {
+    "t": "un prénom d'adulte",
+    "ex": "Gérard",
+    "h": "prenom"
+   },
+   {
+    "t": "un nombre",
+    "ex": "47",
+    "h": "nombre"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "danser la salsa",
+    "h": "verbe"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Pouêt pouêt",
+    "h": "bruit"
+   },
+   {
+    "t": "un objet (au féminin)",
+    "ex": "casserole",
+    "h": "nom"
+   },
+   {
+    "t": "un aliment (au pluriel)",
+    "ex": "cornichons",
+    "h": "pluriel"
+   },
+   {
+    "t": "une partie du corps (au masculin)",
+    "ex": "genou",
+    "h": "nom"
+   }
+  ],
+  "text": "Le jour de la rentrée, notre nouveau maître est entré dans la classe assis sur un {0} {1}. Il s'appelait {2} et il avait {3} ans. Pour se présenter, il a voulu {4} sur son bureau, mais il est tombé dans la poubelle. Toute la classe a crié : « {5} ! » Ensuite, il a sorti de son cartable une {6} géante où s'entassaient des {7}. « C'est votre goûter pour toute l'année », a-t-il annoncé en se grattant un {8}. Le directeur est passé, a regardé la scène et a simplement soupiré : « Ah… encore un lundi normal. »"
+ },
+ {
+  "id": "h11",
+  "title": "Le dîner de famille le plus bizarre du monde",
+  "emo": "🍲",
+  "color": "#FF4F8B",
+  "bonus": false,
+  "blanks": [
+   {
+    "t": "un membre de la famille (au masculin)",
+    "ex": "tonton",
+    "h": "nom"
+   },
+   {
+    "t": "un plat (au féminin)",
+    "ex": "soupe",
+    "h": "nom"
+   },
+   {
+    "t": "un objet (au pluriel)",
+    "ex": "chaussettes",
+    "h": "pluriel"
+   },
+   {
+    "t": "un adjectif (au féminin)",
+    "ex": "verte",
+    "h": "adjectif"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "faire le poirier",
+    "h": "verbe"
+   },
+   {
+    "t": "un nombre",
+    "ex": "12",
+    "h": "nombre"
+   },
+   {
+    "t": "un animal (au masculin)",
+    "ex": "chameau",
+    "h": "nom"
+   },
+   {
+    "t": "un métier",
+    "ex": "astronaute",
+    "h": "nom"
+   },
+   {
+    "t": "un mot inventé",
+    "ex": "Saperlipopouette",
+    "h": "bruit"
+   }
+  ],
+  "text": "Dimanche, mon {0} a préparé une {1} aux {2}. Elle était tellement {3} que le chat s'est enfui par la fenêtre. Mamie a goûté la première cuillère, puis elle s'est mise à {4} sur la table pendant {5} minutes. Soudain, un {6} a sonné à la porte : il avait senti l'odeur depuis l'autre bout de la ville. Il s'est assis, a mangé trois assiettes, puis a annoncé qu'il voulait devenir {7}. Pour finir, tout le monde a levé son verre en criant : « {8} ! » Depuis ce jour-là, le dimanche, on mange des pâtes."
+ },
+ {
+  "id": "hs1",
+  "title": "Mission sur la planète Zinzin",
+  "emo": "🚀",
+  "color": "#3DA5FF",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un prénom",
+    "ex": "Lucas",
+    "h": "prenom"
+   },
+   {
+    "t": "un objet (au masculin)",
+    "ex": "grille-pain",
+    "h": "nom"
+   },
+   {
+    "t": "un nombre",
+    "ex": "300",
+    "h": "nombre"
+   },
+   {
+    "t": "une couleur (au masculin)",
+    "ex": "violet",
+    "h": "adjectif"
+   },
+   {
+    "t": "un animal (au pluriel)",
+    "ex": "pingouins",
+    "h": "pluriel"
+   },
+   {
+    "t": "un adjectif (au masculin pluriel)",
+    "ex": "chatouilleux",
+    "h": "adjectif"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Blurp",
+    "h": "bruit"
+   },
+   {
+    "t": "un aliment (au masculin)",
+    "ex": "yaourt",
+    "h": "nom"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "chanter à tue-tête",
+    "h": "verbe"
+   }
+  ],
+  "text": "Le capitaine {0} a décollé à bord d'un {1} spatial. Après {2} jours de voyage, il s'est posé sur la planète Zinzin, où le ciel est {3} et où il pleut des {4}. Les habitants, des extraterrestres très {5}, l'ont accueilli en faisant « {6} ! », ce qui veut dire bonjour. Leur roi lui a offert un {7} magique : quiconque le mange se met à {8} sans pouvoir s'arrêter. Le capitaine en a croqué un tout petit bout… Il paraît que, là-haut, il continue encore à {8}."
+ },
+ {
+  "id": "hs2",
+  "title": "Le robot qui voulait des câlins",
+  "emo": "🤖",
+  "color": "#33C27A",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un nom de robot inventé",
+    "ex": "R2-Biscotte",
+    "h": "bruit"
+   },
+   {
+    "t": "un objet (au pluriel)",
+    "ex": "casseroles",
+    "h": "pluriel"
+   },
+   {
+    "t": "un adjectif (au masculin)",
+    "ex": "rouillé",
+    "h": "adjectif"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "faire des bulles",
+    "h": "verbe"
+   },
+   {
+    "t": "un animal (au masculin)",
+    "ex": "hérisson",
+    "h": "nom"
+   },
+   {
+    "t": "un nombre",
+    "ex": "12",
+    "h": "nombre"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Bip-bip-snif",
+    "h": "bruit"
+   },
+   {
+    "t": "un aliment (au pluriel)",
+    "ex": "tartines",
+    "h": "pluriel"
+   },
+   {
+    "t": "un adjectif (au féminin)",
+    "ex": "douce",
+    "h": "adjectif"
+   }
+  ],
+  "text": "Dans le garage du professeur Tournevis vit un robot nommé {0}. Il est fabriqué avec des {1} et il est un peu {2}. Il sait tout faire : {3}, compter jusqu'à un milliard et réparer les vélos. Mais personne ne lui fait jamais de câlin. Un jour, il a décidé d'en trouver un. Il a essayé avec le frigo : trop froid. Avec un {4} du jardin : raté, l'animal s'est enfui. Avec {5} passants dans la rue : ils sont tous partis en courant. Triste, {0} s'est assis sur le trottoir en faisant : « {6} ! » C'est là qu'une petite fille s'est approchée. Elle lui a offert des {7} et l'a serré très fort. Depuis, le robot a une nouvelle fonction : « câlin automatique », avec une option {8}."
+ },
+ {
+  "id": "hs3",
+  "title": "La licorne qui détestait les paillettes",
+  "emo": "🦄",
+  "color": "#7B4DFF",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un prénom",
+    "ex": "Huguette",
+    "h": "prenom"
+   },
+   {
+    "t": "un adjectif (au féminin)",
+    "ex": "grincheuse",
+    "h": "adjectif"
+   },
+   {
+    "t": "un nombre",
+    "ex": "50",
+    "h": "nombre"
+   },
+   {
+    "t": "un aliment (au pluriel)",
+    "ex": "choux de Bruxelles",
+    "h": "pluriel"
+   },
+   {
+    "t": "un vêtement (au masculin)",
+    "ex": "jogging",
+    "h": "nom"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "faire du rodéo",
+    "h": "verbe"
+   },
+   {
+    "t": "un animal (au masculin)",
+    "ex": "sanglier",
+    "h": "nom"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Bof-bof",
+    "h": "bruit"
+   },
+   {
+    "t": "une couleur (au féminin)",
+    "ex": "marron",
+    "h": "adjectif"
+   }
+  ],
+  "text": "Au royaume des arcs-en-ciel vivait une licorne nommée {0}. Contrairement aux autres, elle était très {1} : elle détestait les paillettes, les arcs-en-ciel et les chansons qui finissent bien. Chaque matin, on lui servait {2} bols de bonbons roses. Elle, elle préférait les {3}. Au lieu d'une robe de princesse, elle portait un vieux {4}. Le week-end, elle partait {5} avec son meilleur ami, un {6} qui sentait la boue. Quand la reine des fées lui a offert un collier à paillettes, {0} a juste dit : « {7}. » Mais un jour, un gros orage a effacé toutes les couleurs du royaume. Seule {0}, toute {8} et pleine de boue, avait gardé les siennes. Depuis, c'est elle la star du royaume."
+ },
+ {
+  "id": "hs4",
+  "title": "Une nuit au supermarché",
+  "emo": "🛒",
+  "color": "#FFC93C",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un nombre",
+    "ex": "9",
+    "h": "nombre"
+   },
+   {
+    "t": "un aliment (au masculin)",
+    "ex": "saucisson",
+    "h": "nom"
+   },
+   {
+    "t": "un adjectif (au masculin)",
+    "ex": "vexé",
+    "h": "adjectif"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "jouer au bowling",
+    "h": "verbe"
+   },
+   {
+    "t": "un objet (au pluriel)",
+    "ex": "rouleaux de papier toilette",
+    "h": "pluriel"
+   },
+   {
+    "t": "un animal (au masculin)",
+    "ex": "chihuahua",
+    "h": "nom"
+   },
+   {
+    "t": "un aliment (au pluriel)",
+    "ex": "cornichons",
+    "h": "pluriel"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Tchic-tchic-boum",
+    "h": "bruit"
+   },
+   {
+    "t": "un prénom d'adulte",
+    "ex": "Gérard",
+    "h": "prenom"
+   }
+  ],
+  "text": "Samedi, pendant que maman payait, j'ai joué à cache-cache dans le rayon des céréales… et le magasin a fermé avec moi dedans. À {0} heures du soir, les lumières se sont éteintes. Puis, tout a commencé à bouger. Un {1} {2} est descendu de son étagère. Les bouteilles de lait se sont mises à {3} dans l'allée centrale avec des {4}. Un {5} en peluche du rayon jouets a pris le micro : « Attention, attention ! Promotion sur les {6} ! » Tout le monde dansait en faisant : « {7} ! » Au petit matin, le vigile, monsieur {8}, a ouvert les portes. J'étais dans un caddie, un {1} dans les bras. Il m'a fait un clin d'œil : « Toi aussi, tu as vu la fête ? »"
+ },
+ {
+  "id": "hs5",
+  "title": "Mon prof est un vampire",
+  "emo": "🧛",
+  "color": "#FF4F8B",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un nom de famille rigolo",
+    "ex": "Sangsue",
+    "h": "prenom"
+   },
+   {
+    "t": "un adjectif (au masculin)",
+    "ex": "pâle",
+    "h": "adjectif"
+   },
+   {
+    "t": "un vêtement (au féminin)",
+    "ex": "cape",
+    "h": "nom"
+   },
+   {
+    "t": "un aliment (au masculin)",
+    "ex": "radis",
+    "h": "nom"
+   },
+   {
+    "t": "un nombre",
+    "ex": "600",
+    "h": "nombre"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "dormir la tête en bas",
+    "h": "verbe"
+   },
+   {
+    "t": "un objet (au masculin)",
+    "ex": "parapluie",
+    "h": "nom"
+   },
+   {
+    "t": "un animal (au pluriel)",
+    "ex": "chauves-souris",
+    "h": "pluriel"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Mouahaha-hips",
+    "h": "bruit"
+   }
+  ],
+  "text": "Notre nouveau professeur s'appelle monsieur {0}. Il est très {1}, il porte une {2} noire même en été, et à la cantine, il ne mange rien… sauf un {3} à chaque récré. Il dit qu'il a {4} ans. Pendant les contrôles, il aime {5} au plafond. Quand il fait beau, il fait cours sous un {6}. Le soir, des {7} l'attendent devant l'école. Un jour, on lui a demandé s'il était un vampire. Il a souri, on a vu deux grandes dents pointues, et il a répondu : « {8} ! Mais non, voyons. Ce sont mes dents de lait. » On n'est toujours pas sûrs."
+ },
+ {
+  "id": "hs6",
+  "title": "Le youtubeur le plus nul du monde",
+  "emo": "🎥",
+  "color": "#3DA5FF",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un pseudo inventé",
+    "ex": "Kévin-Banane",
+    "h": "bruit"
+   },
+   {
+    "t": "un nombre",
+    "ex": "3",
+    "h": "nombre"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "manger une soupe avec une fourchette",
+    "h": "verbe"
+   },
+   {
+    "t": "un animal (au masculin)",
+    "ex": "lama",
+    "h": "nom"
+   },
+   {
+    "t": "un adjectif (au masculin)",
+    "ex": "ennuyeux",
+    "h": "adjectif"
+   },
+   {
+    "t": "un objet (au féminin)",
+    "ex": "chaise",
+    "h": "nom"
+   },
+   {
+    "t": "un aliment (au pluriel)",
+    "ex": "pâtes",
+    "h": "pluriel"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Abonnez-vous-ouille",
+    "h": "bruit"
+   },
+   {
+    "t": "un très grand nombre",
+    "ex": "2 millions",
+    "h": "nombre"
+   }
+  ],
+  "text": "Mon cousin a lancé sa chaîne de vidéos. Son pseudo : {0}. Au début, il avait {1} abonnés : sa mère, sa grand-mère et un robot. Dans sa première vidéo, il voulait {2} devant la caméra. Dans la deuxième, il interviewait un {3} qui ne disait rien. Les gens ont trouvé ça très {4}. Dans la troisième, il a déballé une {5} pendant deux heures. Puis il a voulu faire un défi : se renverser des {6} sur la tête. Il a glissé, il est tombé et il a crié : « {7} ! » sans arrêter la caméra. Cette vidéo-là a fait {8} vues. Maintenant, il tombe exprès dans chaque vidéo."
+ },
+ {
+  "id": "hs7",
+  "title": "La sorcière qui ratait toutes ses potions",
+  "emo": "🧙",
+  "color": "#33C27A",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un nom de sorcière inventé",
+    "ex": "Cracmolle",
+    "h": "bruit"
+   },
+   {
+    "t": "un nombre",
+    "ex": "300",
+    "h": "nombre"
+   },
+   {
+    "t": "un animal (au pluriel)",
+    "ex": "crapauds",
+    "h": "pluriel"
+   },
+   {
+    "t": "un aliment (au masculin)",
+    "ex": "camembert",
+    "h": "nom"
+   },
+   {
+    "t": "un objet (au pluriel)",
+    "ex": "chaussettes",
+    "h": "pluriel"
+   },
+   {
+    "t": "une formule magique inventée",
+    "ex": "Abracadoudou",
+    "h": "bruit"
+   },
+   {
+    "t": "un animal (au masculin)",
+    "ex": "poussin",
+    "h": "nom"
+   },
+   {
+    "t": "une couleur (au masculin)",
+    "ex": "rose",
+    "h": "adjectif"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "faire du patin à roulettes",
+    "h": "verbe"
+   }
+  ],
+  "text": "La sorcière {0} a {1} ans. Elle a un chaudron, un balai et des {2} qui lui servent d'assistants. Mais elle a un problème : elle rate toutes ses potions. Hier, elle voulait devenir invisible. Elle a mis dans le chaudron un {3}, deux {4} et une plume de corbeau. Elle a remué en disant : « {5} ! » Boum ! Elle s'est transformée en {6} tout {7}. Le lendemain, elle a voulu que son balai vole plus vite. Résultat : il s'est mis à {8} tout seul dans la cuisine. Maintenant, elle a ouvert une boutique : « Potions ratées, fous rires garantis ». Elle a beaucoup de clients."
+ },
+ {
+  "id": "hs8",
+  "title": "Le jour où les adultes sont redevenus des enfants",
+  "emo": "🧸",
+  "color": "#7B4DFF",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un nombre",
+    "ex": "7",
+    "h": "nombre"
+   },
+   {
+    "t": "un métier",
+    "ex": "banquier",
+    "h": "nom"
+   },
+   {
+    "t": "un jouet (au masculin)",
+    "ex": "doudou",
+    "h": "nom"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "faire des grimaces",
+    "h": "verbe"
+   },
+   {
+    "t": "un adjectif (au féminin)",
+    "ex": "collante",
+    "h": "adjectif"
+   },
+   {
+    "t": "un aliment (au pluriel)",
+    "ex": "bonbons",
+    "h": "pluriel"
+   },
+   {
+    "t": "un meuble (au masculin)",
+    "ex": "bureau",
+    "h": "nom"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Ouiiinnn",
+    "h": "bruit"
+   },
+   {
+    "t": "un adjectif (au masculin)",
+    "ex": "épuisé",
+    "h": "adjectif"
+   }
+  ],
+  "text": "Un matin, tous les adultes de la ville se sont réveillés comme s'ils avaient {0} ans. Papa, qui est {1}, est parti au travail avec un {2} sous le bras. Le maire a passé toute la réunion du conseil municipal à {3}. Maman a refusé de manger sa soupe parce qu'elle était trop {4}. Les voisins ont mangé des {5} au petit déjeuner, au déjeuner et au dîner. Le directeur de l'école a construit une cabane sous un {6}. Le soir, tous les adultes ont refusé d'aller se coucher : « {7} ! » Alors, c'est nous, les enfants, qui avons tout géré : les courses, la vaisselle et les histoires du soir. Le lendemain, tout était redevenu normal. Mais nous, on était complètement {8}."
+ },
+ {
+  "id": "hs9",
+  "title": "Le jeu vidéo qui m'a avalé",
+  "emo": "🎮",
+  "color": "#FFC93C",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un nom de jeu inventé",
+    "ex": "Méga-Bidule 3000",
+    "h": "bruit"
+   },
+   {
+    "t": "un nombre",
+    "ex": "42",
+    "h": "nombre"
+   },
+   {
+    "t": "un animal (au pluriel)",
+    "ex": "lapins",
+    "h": "pluriel"
+   },
+   {
+    "t": "un objet (au masculin)",
+    "ex": "chausson",
+    "h": "nom"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "sauter par-dessus les nuages",
+    "h": "verbe"
+   },
+   {
+    "t": "un aliment (au féminin)",
+    "ex": "pastèque",
+    "h": "nom"
+   },
+   {
+    "t": "un adjectif (au féminin)",
+    "ex": "rigolote",
+    "h": "adjectif"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Game-ovouille",
+    "h": "bruit"
+   },
+   {
+    "t": "un prénom",
+    "ex": "Maxime",
+    "h": "prenom"
+   }
+  ],
+  "text": "Hier, je jouais à « {0} » quand l'écran m'a aspiré. D'un coup, j'étais dans le jeu. J'avais {1} vies et des {2} me poursuivaient. Mon arme ? Un {3} qui lançait des étoiles. Pour passer au niveau suivant, il fallait {4}. Le boss final était une {5} géante à la voix {6}. Juste avant de perdre ma dernière vie, j'ai crié : « {7} ! » et la manette a vibré. Pouf ! L'écran m'a recraché sur le canapé. Mon frère {8} n'avait rien remarqué. Il a juste dit : « Tu as battu mon record. Tricheur. »"
+ },
+ {
+  "id": "hs10",
+  "title": "L'ascenseur qui allait partout sauf au bon étage",
+  "emo": "🛗",
+  "color": "#FF4F8B",
+  "bonus": true,
+  "blanks": [
+   {
+    "t": "un nombre",
+    "ex": "4",
+    "h": "nombre"
+   },
+   {
+    "t": "un adjectif (au masculin)",
+    "ex": "farceur",
+    "h": "adjectif"
+   },
+   {
+    "t": "un endroit (au masculin)",
+    "ex": "zoo",
+    "h": "nom"
+   },
+   {
+    "t": "un animal (au pluriel)",
+    "ex": "dauphins",
+    "h": "pluriel"
+   },
+   {
+    "t": "un aliment (au pluriel)",
+    "ex": "pizzas",
+    "h": "pluriel"
+   },
+   {
+    "t": "un prénom d'adulte",
+    "ex": "Simone",
+    "h": "prenom"
+   },
+   {
+    "t": "un verbe à l'infinitif",
+    "ex": "faire du karaoké",
+    "h": "verbe"
+   },
+   {
+    "t": "un bruit rigolo",
+    "ex": "Ding-dong-doudou",
+    "h": "bruit"
+   },
+   {
+    "t": "un objet (au féminin)",
+    "ex": "trompette",
+    "h": "nom"
+   }
+  ],
+  "text": "J'habite au {0}e étage. Ce matin, j'ai pris l'ascenseur. Mais ce n'était pas un ascenseur normal : il était {1}. Quand j'ai appuyé sur mon bouton, les portes se sont ouvertes sur un {2} où des {3} jouaient aux cartes. Deuxième essai : les portes se sont ouvertes sur la Lune, où des astronautes mangeaient des {4}. Troisième essai : une salle de sport où ma voisine, madame {5}, apprenait à {6}. À chaque fois, l'ascenseur faisait : « {7} ! » Finalement, les portes se sont ouvertes sur mon palier. Maman m'attendait : « Tu étais où ? Ça fait trois heures ! » J'ai juste montré ce que j'avais dans les mains : une {8} offerte par madame {5}."
+ }
+];
+
+const HELP = {
+ nom:"<b>Un nom</b>, c'est le mot qui désigne une personne, un animal ou une chose : <i>chien, table, pompier</i>. « Au masculin » = on peut dire <i>un</i> devant. « Au féminin » = on peut dire <i>une</i> devant.",
+ pluriel:"<b>Au pluriel</b> = il y en a plusieurs. On peut dire <i>des</i> devant, et souvent il se termine par un <i>s</i> : <i>des bananes, des chevaux</i>.",
+ adjectif:"<b>Un adjectif</b> décrit comment est quelque chose : <i>grand, mou, puant, rigolo</i>. Astuce : il doit aller après « un chat… » ou « une chatte… ».",
+ verbe:"<b>Un verbe à l'infinitif</b>, c'est une action qui finit souvent par <i>-er, -ir, -re</i> : <i>sauter, rugir, faire des bulles</i>. Astuce : on peut dire « il faut… » devant.",
+ nombre:"<b>Un nombre</b> : n'importe lequel ! <i>3, 1000, un milliard</i>…",
+ prenom:"<b>Un prénom</b> : celui de quelqu'un que tu connais… ou un prénom inventé !",
+ bruit:"<b>Un bruit ou un mot inventé</b> : le plus bizarre possible ! <i>Splatch, Bidouillou, Gnagnagna</i>…"
+};
+
+const IDEAS = {
+ nom:["pingouin","aspirateur","dragon","tracteur","croissant","dinosaure","bigoudi","koala","sous-marin","fromage"],
+ pluriel:["chaussettes","spaghettis","escargots","trompettes","bisous","lunettes","crêpes","dents de lait"],
+ adjectif:["gluant","poilu","minuscule","fluo","grincheux","chatouilleux","puant","magique"],
+ verbe:["danser le hip-hop","roter","faire des bulles","éternuer","chanter faux","ramper","faire la toupie"],
+ nombre:["7","42","999","3 000","un million","12"],
+ prenom:["Gertrude","Kévin","Mamadou","Josiane","Igor","Zoé"],
+ bruit:["Pouêt","Splatch","Gloubi-boulga","Tagada","Bzzzz","Patatras"]
+};
+
+/* ---------- état ---------- */
+const store = { get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
+let unlocked = store.get("zz-unlocked")==="1";
+let cur=null, answers=[], step=0, voice="normale";
+const app=document.getElementById("app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800)}
+function stopSpeech(){try{speechSynthesis.cancel()}catch(e){}}
+
+/* ---------- accueil ---------- */
+function home(){
+ stopSpeech();
+ let h=`<div class="logo"><h1><span>Les</span> <span>Histoires</span><br><span class="z">Zinzins</span> 🤪</h1><p>Remplis les blancs… et explose de rire !</p></div>
+ <div class="card"><h3 class="fred" style="margin:0 0 6px">Comment on joue ?</h3>
+ <div class="muted" style="font-weight:700;line-height:1.5">1. Choisis une histoire.<br>2. Passe le téléphone : chacun donne un mot <u>sans connaître l'histoire</u>.<br>3. Écoute l'histoire lue par une voix rigolote !</div></div>`;
+ STORIES.forEach(s=>{
+  const lock=s.bonus&&!unlocked;
+  h+=`<div class="card story ${lock?'locked':''}" onclick="${lock?'unlockView()':`start('${s.id}')`}">
+   <div class="emo" style="background:${s.color}">${lock?'🔒':s.emo}</div>
+   <div><h3>${esc(s.title)}${s.bonus?'<span class="tag">BONUS</span>':''}</h3><p>${lock?'Histoire secrète : entre le code du livre':s.blanks.length+' mots à trouver'}</p></div></div>`;
+ });
+ h+=`<p class="center muted small">Francis W. Wolff</p>`;
+ app.innerHTML=h; window.scrollTo(0,0);
+}
+
+/* ---------- code secret ---------- */
+function unlockView(){
+ app.innerHTML=`<button class="back" onclick="home()">← Retour</button>
+ <div class="card center"><div style="font-size:56px">🔐</div><h2 class="fred" style="margin:4px 0">Histoire secrète</h2>
+ <p class="muted" style="font-weight:700">Le code secret est caché à la dernière page de ton livre <i>Les Histoires Zinzins</i>.</p>
+ <form id="f"><input type="text" id="code" placeholder="Le code secret" autocomplete="off" style="text-align:center;text-transform:uppercase"><div style="height:12px"></div><button class="btn pink" type="submit">Débloquer</button></form>
+ </div>`;
+ document.getElementById("f").onsubmit=e=>{e.preventDefault();
+  if(document.getElementById("code").value.trim().toUpperCase()==="BIDOUILLE"){unlocked=true;store.set("zz-unlocked","1");confetti();toast("Histoire secrète débloquée !");setTimeout(home,700)}
+  else toast("Mauvais code… cherche bien dans le livre !")};
+}
+
+/* ---------- saisie des mots ---------- */
+function start(id){cur=STORIES.find(s=>s.id===id);answers=[];step=0;ask()}
+function ask(){
+ const b=cur.blanks[step], pct=Math.round(step/cur.blanks.length*100);
+ app.innerHTML=`<button class="back" onclick="home()">← Toutes les histoires</button>
+ <div class="card">
+  <div class="progress"><div style="width:${pct}%"></div></div>
+  <div class="ask">Mot ${step+1} sur ${cur.blanks.length} · demande à quelqu'un :</div>
+  <div class="type">${esc(b.t)}</div>
+  <div class="ex">Par exemple : « ${esc(b.ex)} »</div>
+  <form id="f"><input type="text" id="w" autocomplete="off" autocapitalize="off" enterkeyhint="next" value="${esc(answers[step]||'')}" placeholder="Écris le mot ici">
+  <button type="button" class="help" onclick="toggleHelp()">C'est quoi, ${b.h==='nom'||b.h==='pluriel'?'un nom':b.h==='adjectif'?'un adjectif':b.h==='verbe'?'un verbe':b.h==='nombre'?'un nombre':b.h==='prenom'?'un prénom':'un mot inventé'} ?</button>
+  <div class="helpbox hidden" id="hb">${HELP[b.h]}</div>
+  <div class="row"><button type="button" class="btn white" onclick="idea()">🎲 Une idée</button><button class="btn green" type="submit">${step===cur.blanks.length-1?'Voir l\'histoire !':'Suivant →'}</button></div>
+  ${step>0?'<div style="height:10px"></div><button type="button" class="btn white small" onclick="prev()">← Mot précédent</button>':''}
+  </form></div>`;
+ const w=document.getElementById("w"); w.focus();
+ document.getElementById("f").onsubmit=e=>{e.preventDefault();const v=w.value.trim();if(!v){toast("Il faut un mot !");return}
+  answers[step]=v; if(step<cur.blanks.length-1){step++;ask()}else reveal()};
+}
+function prev(){answers[step]=document.getElementById("w").value.trim();step--;ask()}
+function toggleHelp(){document.getElementById("hb").classList.toggle("hidden")}
+function idea(){const l=IDEAS[cur.blanks[step].h];document.getElementById("w").value=l[Math.floor(Math.random()*l.length)]}
+
+/* ---------- révélation ---------- */
+function filled(html){return cur.text.replace(/\{(\d+)\}/g,(m,i)=>html?`<b data-i="${i}">${esc(answers[i])}</b>`:answers[i])}
+function reveal(){
+ app.innerHTML=`<button class="back" onclick="home()">← Toutes les histoires</button>
+ <div class="card"><h2 class="fred" style="margin:0 0 10px">${cur.emo} ${esc(cur.title)}</h2><div class="text" id="txt">${filled(true)}</div></div>
+ <div class="card"><h3 class="fred" style="margin:0 0 4px">🔊 Fais-la lire par…</h3>
+  <div class="voices">${[["normale","🙂 Voix normale"],["souris","🐭 Une souris"],["geant","👹 Un géant"],["robot","🤖 Un robot"]].map(([k,l])=>`<button class="vbtn ${k===voice?'sel':''}" onclick="speak('${k}',this)">${l}</button>`).join('')}</div>
+  <p class="muted small" id="vmsg" style="margin:10px 0 0"></p></div>
+ <div class="row"><button class="btn pink" onclick="start('${cur.id}')">🔁 Rejouer</button><button class="btn blue" onclick="copyStory()">📋 Copier</button></div>
+ <div style="height:12px"></div><button class="btn white" onclick="home()">Une autre histoire</button>`;
+ confetti(); window.scrollTo(0,0);
+}
+function speak(k,el){
+ voice=k; document.querySelectorAll(".vbtn").forEach(b=>b.classList.toggle("sel",b===el));
+ const msg=document.getElementById("vmsg");
+ if(!("speechSynthesis" in window)){msg.textContent="La lecture à voix haute n'est pas disponible sur cet appareil.";return}
+ stopSpeech();
+ const u=new SpeechSynthesisUtterance(cur.title+". "+filled(false));
+ u.lang="fr-FR";
+ const fr=speechSynthesis.getVoices().filter(v=>/^fr/i.test(v.lang)); if(fr.length)u.voice=fr.find(v=>/fr-FR/i.test(v.lang))||fr[0];
+ const P={normale:[1,1],souris:[2,1.25],geant:[0.1,0.8],robot:[0.5,0.85]}[k];
+ u.pitch=P[0];u.rate=P[1];
+ u.onerror=()=>{msg.textContent="Le son n'a pas pu démarrer : vérifie que ton téléphone n'est pas en silencieux."};
+ try{speechSynthesis.speak(u);msg.textContent="Lecture en cours… (touche une autre voix pour recommencer)"}catch(e){msg.textContent="Lecture impossible sur cet appareil."}
+}
+function copyStory(){
+ const t=cur.title+"\n\n"+filled(false)+"\n\n— Les Histoires Zinzins";
+ if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>toast("Histoire copiée ! Colle-la dans un message."),()=>toast("Copie impossible ici."))}else toast("Copie impossible ici.");
+}
+function confetti(){const c=document.getElementById("confetti");const cols=["#FF4F8B","#FFC93C","#3DA5FF","#33C27A","#7B4DFF"];
+ for(let i=0;i<60;i++){const e=document.createElement("i");e.style.left=Math.random()*100+"vw";e.style.background=cols[i%5];e.style.animationDelay=Math.random()*.6+"s";e.style.animationDuration=1.4+Math.random()+"s";c.appendChild(e)}
+ setTimeout(()=>c.innerHTML="",2600)}
+try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
+home();
+</script>
+</body>
+</html>
